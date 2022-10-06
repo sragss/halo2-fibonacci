@@ -19,12 +19,10 @@ Options:
 
 Tests: `cargo test`
 
-# Different layouts
-## Fib
+## `fib.rs`: 3 Advice Columns
 ![3 advice](plots/Fib_Circuit_3_Advice.png)
 
 ```
-3 advice columns.
 | a | b | c |
 |---|---|---|
 | 0 | 1 | 1 |
@@ -34,8 +32,7 @@ Tests: `cargo test`
 ....
 ```
 
-## Fib2
-2 advice columns.
+## `fib2.rs`: 2 Advice Columns
 ![2 advice](plots/Fib_Circuit_2_Advice.png)
 
 ```
