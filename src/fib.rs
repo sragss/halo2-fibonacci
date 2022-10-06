@@ -237,20 +237,18 @@ impl<F: FieldExt> Circuit<F> for FibCircuit<F> {
     }
 }
 
-const NUM_STEPS: usize = 180 as usize;
-
 // Same as test with printing
-pub fn run(plot: bool) {
+pub fn run(plot: bool, num_steps: usize) {
     let circuit = FibCircuit {
         init_a: Value::known(Fp::one()),
         init_b: Value::known(Fp::one()),
-        n: NUM_STEPS,
+        n: num_steps,
     };
-    let k = calc_k(NUM_STEPS);
+    let k = calc_k(num_steps);
 
     if plot {
         use plotters::prelude::*;
-        let plot_name = "Fib_Circuit_3_Advice.png";
+        let plot_name = "plots/Fib_Circuit_3_Advice.png";
         let root = BitMapBackend::new(plot_name, (1024, 768)).into_drawing_area();
         root.fill(&WHITE).unwrap();
         let root = root.titled(plot_name, ("sans-serif", 60)).unwrap();
@@ -269,7 +267,7 @@ pub fn run(plot: bool) {
 
     let before = Instant::now();
     let prover =
-        MockProver::run(k, &circuit, vec![vec![Fp::from_u128(fib_calc(NUM_STEPS))]]).unwrap();
+        MockProver::run(k, &circuit, vec![vec![Fp::from_u128(fib_calc(num_steps))]]).unwrap();
     let elapsed = before.elapsed();
     assert_eq!(prover.verify(), Ok(()));
     println!("Proof time: {} micros", elapsed.as_micros());
@@ -277,6 +275,7 @@ pub fn run(plot: bool) {
 
 #[test]
 fn test_fib() {
+    const NUM_STEPS: usize = 180 as usize;
     let circuit = FibCircuit {
         init_a: Value::known(Fp::one()),
         init_b: Value::known(Fp::one()),
@@ -291,9 +290,8 @@ fn test_fib() {
 }
 
 // HELPERS
-
 fn calc_k(n: usize) -> u32 {
     let mut rows_required = 1 + 2; // 1 (load public) + 2 (load private)
-    rows_required += n; // 2 rows per step
-    return fast_math::log2(rows_required as f32).ceil() as u32;
+    rows_required += n; // 1 rows per step
+    return fast_math::log2(n as f32).ceil() as u32 + 1; // 1 (load public) + 2 (load private)
 }
